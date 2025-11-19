@@ -6,6 +6,7 @@ import HowItWorks from './components/HowItWorks'
 import Testimonials from './components/Testimonials'
 import Cart from './components/Cart'
 import ParallaxBackground from './components/ParallaxBackground'
+import Story from './components/Story'
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
 
@@ -46,6 +47,7 @@ function App() {
         <Hero />
         <Gifts onAdd={handleAdd} />
         <HowItWorks />
+        <Story />
         <Testimonials />
       </main>
       {cartOpen && (
