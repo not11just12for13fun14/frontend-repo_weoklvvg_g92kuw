@@ -17,7 +17,6 @@ export default function ParallaxBackground() {
   // Parallax glow layers
   const ySlow = useTransform(scrollYProgress, [0, 1], [0, -140])
   const yMed = useTransform(scrollYProgress, [0, 1], [0, -260])
-  const yFast = useTransform(scrollYProgress, [0, 1], [0, -380])
 
   // Reduced motion fallbacks
   const rmOpacity = prefersReducedMotion ? 0.9 : undefined
@@ -25,62 +24,22 @@ export default function ParallaxBackground() {
 
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
-      {/* FULL-BLEED STORY SCENES */}
-      {/* Scene 1: He explores and chooses */}
+      {/* BACKGROUND DECOR BELOW SCENES */}
       <motion.div
-        className="absolute inset-0"
-        style={{ opacity: prefersReducedMotion ? rmOpacity : s1Opacity }}
-      >
-        <motion.img
-          src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1920&auto=format&fit=crop"
-          alt="Молодой человек выбирает подарок в телефоне"
-          className="w-full h-full object-cover"
-          style={{ scale: prefersReducedMotion ? rmScale : s1Scale }}
-        />
-        {/* Readability vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_40%,rgba(0,0,0,0)_0%,rgba(2,6,23,0.45)_60%,rgba(2,6,23,0.75)_100%)]" />
-      </motion.div>
-
-      {/* Scene 2: Checkout and send */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ opacity: prefersReducedMotion ? 0 : s2Opacity }}
-      >
-        <motion.img
-          src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1920&auto=format&fit=crop"
-          alt="Оформление цифрового подарка"
-          className="w-full h-full object-cover"
-          style={{ scale: prefersReducedMotion ? rmScale : s2Scale }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_45%,rgba(0,0,0,0)_0%,rgba(2,6,23,0.45)_60%,rgba(2,6,23,0.78)_100%)]" />
-      </motion.div>
-
-      {/* Scene 3: She receives and smiles */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ opacity: prefersReducedMotion ? 0 : s3Opacity }}
-      >
-        <motion.img
-          src="https://images.unsplash.com/photo-1758874089961-e52549c294c3?auto=format&fit=crop&w=1920&q=80"
-          alt="Девушка получает цифровой подарок на телефон"
-          className="w-full h-full object-cover"
-          style={{ scale: prefersReducedMotion ? rmScale : s3Scale }}
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_55%,rgba(0,0,0,0)_0%,rgba(2,6,23,0.45)_60%,rgba(2,6,23,0.8)_100%)]" />
-      </motion.div>
-
-      {/* COLOR GLOW + GRID for premium depth (below content readability) */}
-      <motion.div
+        aria-hidden
         style={{ y: prefersReducedMotion ? 0 : ySlow }}
-        className="absolute -inset-40"
+        className="absolute -inset-40 z-0"
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900/60 to-slate-950" />
+        {/* Dark base gradient kept subtle so photos show through */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950/60 via-slate-900/50 to-slate-950/60" />
+        {/* Color glows with screen blend */}
         <div className="absolute inset-0 bg-[radial-gradient(900px_420px_at_80%_-10%,rgba(236,72,153,0.18),transparent),radial-gradient(700px_360px_at_20%_0%,rgba(124,58,237,0.16),transparent)] mix-blend-screen" />
       </motion.div>
 
       <motion.div
+        aria-hidden
         style={{ y: prefersReducedMotion ? 0 : yMed }}
-        className="absolute inset-0 opacity-[0.08]"
+        className="absolute inset-0 opacity-[0.08] z-0"
       >
         <div
           className="absolute inset-0"
@@ -95,8 +54,55 @@ export default function ParallaxBackground() {
         />
       </motion.div>
 
+      {/* FULL-BLEED STORY SCENES (ON TOP) */}
+      {/* Scene 1: He explores and chooses */}
+      <motion.div
+        className="absolute inset-0 z-10"
+        style={{ opacity: prefersReducedMotion ? rmOpacity : s1Opacity }}
+      >
+        <motion.img
+          src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1920&q=80"
+          alt="Молодой человек выбирает подарок в телефоне"
+          className="w-full h-full object-cover"
+          loading="eager"
+          style={{ scale: prefersReducedMotion ? rmScale : s1Scale }}
+        />
+        {/* Readability vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_40%,rgba(0,0,0,0)_0%,rgba(2,6,23,0.35)_60%,rgba(2,6,23,0.6)_100%)]" />
+      </motion.div>
+
+      {/* Scene 2: Checkout and send */}
+      <motion.div
+        className="absolute inset-0 z-10"
+        style={{ opacity: prefersReducedMotion ? 0 : s2Opacity }}
+      >
+        <motion.img
+          src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1920&q=80"
+          alt="Оформление цифрового подарка"
+          className="w-full h-full object-cover"
+          loading="lazy"
+          style={{ scale: prefersReducedMotion ? rmScale : s2Scale }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_45%,rgba(0,0,0,0)_0%,rgba(2,6,23,0.35)_60%,rgba(2,6,23,0.65)_100%)]" />
+      </motion.div>
+
+      {/* Scene 3: She receives and smiles */}
+      <motion.div
+        className="absolute inset-0 z-10"
+        style={{ opacity: prefersReducedMotion ? 0 : s3Opacity }}
+      >
+        <motion.img
+          src="https://images.unsplash.com/photo-1517263904808-5dc91e3e7044?auto=format&fit=crop&w=1920&q=80"
+          alt="Девушка получает цифровой подарок на телефон"
+          className="w-full h-full object-cover"
+          loading="lazy"
+          style={{ scale: prefersReducedMotion ? rmScale : s3Scale }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_55%,rgba(0,0,0,0)_0%,rgba(2,6,23,0.35)_60%,rgba(2,6,23,0.68)_100%)]" />
+      </motion.div>
+
       {/* Subtle bottom fade to ensure footer readability */}
-      <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-slate-950/90 via-slate-950/60 to-transparent z-20" />
     </div>
   )
 }
