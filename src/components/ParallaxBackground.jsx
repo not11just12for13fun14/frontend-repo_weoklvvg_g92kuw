@@ -4,44 +4,82 @@ export default function ParallaxBackground() {
   const { scrollYProgress } = useScroll()
   const prefersReducedMotion = useReducedMotion()
 
-  // Translate values based on scroll progress (0 -> 1)
-  const ySlow = useTransform(scrollYProgress, [0, 1], [0, -120])
-  const yMed = useTransform(scrollYProgress, [0, 1], [0, -220])
-  const yFast = useTransform(scrollYProgress, [0, 1], [0, -340])
-  const xDrift = useTransform(scrollYProgress, [0, 1], [0, 80])
+  // Crossfade timeline: whole background is a story
+  const s1Opacity = useTransform(scrollYProgress, [0, 0.18, 0.32, 0.45], [1, 1, 0.2, 0])
+  const s2Opacity = useTransform(scrollYProgress, [0.28, 0.42, 0.58, 0.72], [0, 1, 1, 0])
+  const s3Opacity = useTransform(scrollYProgress, [0.6, 0.74, 1.0], [0, 1, 1])
 
-  // Narrative scene fades along the scroll
-  const s1Opacity = useTransform(scrollYProgress, [0.0, 0.12, 0.28, 0.36], [0, 0.14, 0.14, 0])
-  const s2Opacity = useTransform(scrollYProgress, [0.32, 0.44, 0.62, 0.7], [0, 0.14, 0.14, 0])
-  const s3Opacity = useTransform(scrollYProgress, [0.66, 0.78, 0.96, 1.0], [0, 0.16, 0.16, 0])
+  // Gentle Ken Burns effect per scene
+  const s1Scale = useTransform(scrollYProgress, [0, 0.5], [1.06, 1.0])
+  const s2Scale = useTransform(scrollYProgress, [0.35, 0.85], [1.03, 1.0])
+  const s3Scale = useTransform(scrollYProgress, [0.7, 1.0], [1.05, 1.0])
 
-  // If reduced motion preferred, keep things static
-  const maybe = (val) => (prefersReducedMotion ? 0 : val)
+  // Parallax glow layers
+  const ySlow = useTransform(scrollYProgress, [0, 1], [0, -140])
+  const yMed = useTransform(scrollYProgress, [0, 1], [0, -260])
+  const yFast = useTransform(scrollYProgress, [0, 1], [0, -380])
+
+  // Reduced motion fallbacks
+  const rmOpacity = prefersReducedMotion ? 0.9 : undefined
+  const rmScale = prefersReducedMotion ? 1.0 : undefined
 
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Soft radial wash that moves gently */}
+    <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+      {/* FULL-BLEED STORY SCENES */}
+      {/* Scene 1: He explores and chooses */}
       <motion.div
-        style={{ y: maybe(ySlow), x: maybe(xDrift) }}
-        className="absolute -inset-40 opacity-80"
+        className="absolute inset-0"
+        style={{ opacity: prefersReducedMotion ? rmOpacity : s1Opacity }}
       >
-        <div className="absolute inset-0 bg-[radial-gradient(1000px_520px_at_80%_-10%,rgba(236,72,153,0.25),transparent),radial-gradient(800px_420px_at_20%_0%,rgba(124,58,237,0.22),transparent)]" />
+        <motion.img
+          src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1920&auto=format&fit=crop"
+          alt="Молодой человек выбирает подарок в телефоне"
+          className="w-full h-full object-cover"
+          style={{ scale: prefersReducedMotion ? rmScale : s1Scale }}
+        />
+        {/* Readability vignette */}
+        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_40%,rgba(0,0,0,0)_0%,rgba(2,6,23,0.45)_60%,rgba(2,6,23,0.75)_100%)]" />
       </motion.div>
 
-      {/* Floating color blobs with heavy blur for premium glow */}
+      {/* Scene 2: Checkout and send */}
       <motion.div
-        style={{ y: maybe(yMed) }}
-        className="absolute top-[-10%] left-[-10%] w-[42rem] h-[42rem] rounded-full bg-pink-500/18 blur-3xl mix-blend-screen"
-      />
+        className="absolute inset-0"
+        style={{ opacity: prefersReducedMotion ? 0 : s2Opacity }}
+      >
+        <motion.img
+          src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1920&auto=format&fit=crop"
+          alt="Оформление цифрового подарка"
+          className="w-full h-full object-cover"
+          style={{ scale: prefersReducedMotion ? rmScale : s2Scale }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_45%,rgba(0,0,0,0)_0%,rgba(2,6,23,0.45)_60%,rgba(2,6,23,0.78)_100%)]" />
+      </motion.div>
+
+      {/* Scene 3: She receives and smiles */}
+      <motion.div
+        className="absolute inset-0"
+        style={{ opacity: prefersReducedMotion ? 0 : s3Opacity }}
+      >
+        <motion.img
+          src="https://images.unsplash.com/photo-1758874089961-e52549c294c3?auto=format&fit=crop&w=1920&q=80"
+          alt="Девушка получает цифровой подарок на телефон"
+          className="w-full h-full object-cover"
+          style={{ scale: prefersReducedMotion ? rmScale : s3Scale }}
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(80%_60%_at_50%_55%,rgba(0,0,0,0)_0%,rgba(2,6,23,0.45)_60%,rgba(2,6,23,0.8)_100%)]" />
+      </motion.div>
+
+      {/* COLOR GLOW + GRID for premium depth (below content readability) */}
+      <motion.div
+        style={{ y: prefersReducedMotion ? 0 : ySlow }}
+        className="absolute -inset-40"
+      >
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900/60 to-slate-950" />
+        <div className="absolute inset-0 bg-[radial-gradient(900px_420px_at_80%_-10%,rgba(236,72,153,0.18),transparent),radial-gradient(700px_360px_at_20%_0%,rgba(124,58,237,0.16),transparent)] mix-blend-screen" />
+      </motion.div>
 
       <motion.div
-        style={{ y: maybe(yFast) }}
-        className="absolute bottom-[-15%] right-[-10%] w-[46rem] h-[46rem] rounded-full bg-violet-500/16 blur-3xl mix-blend-screen"
-      />
-
-      {/* Subtle moving grid for depth */}
-      <motion.div
-        style={{ y: maybe(ySlow) }}
+        style={{ y: prefersReducedMotion ? 0 : yMed }}
         className="absolute inset-0 opacity-[0.08]"
       >
         <div
@@ -51,63 +89,14 @@ export default function ParallaxBackground() {
               "linear-gradient(rgba(255,255,255,.12) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.12) 1px, transparent 1px)",
             backgroundSize: '80px 80px',
             backgroundPosition: '0 0, 0 0',
-            maskImage: 'radial-gradient(ellipse at center, black 60%, transparent 100%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at center, black 60%, transparent 100%)',
+            maskImage: 'radial-gradient(ellipse at center, black 62%, transparent 100%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at center, black 62%, transparent 100%)',
           }}
         />
       </motion.div>
 
-      {/* BACKGROUND STORY PANELS */}
-      {/* Scene 1: He explores and chooses */}
-      <motion.div
-        style={{ y: maybe(yMed), opacity: prefersReducedMotion ? 0.1 : s1Opacity }}
-        className="absolute top-[8%] left-1/2 -translate-x-[60%] w-[48rem] max-w-[90vw] aspect-[16/9] rounded-[2.2rem] overflow-hidden border border-white/5"
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,23,42,.6),transparent_30%,rgba(15,23,42,.7))]" />
-        <img
-          src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?q=80&w=1600&auto=format&fit=crop"
-          alt=""
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0" style={{
-          maskImage: 'radial-gradient(90% 70% at 50% 50%, black 60%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(90% 70% at 50% 50%, black 60%, transparent 100%)'
-        }} />
-      </motion.div>
-
-      {/* Scene 2: Checkout and send */}
-      <motion.div
-        style={{ y: maybe(ySlow), opacity: prefersReducedMotion ? 0.1 : s2Opacity }}
-        className="absolute top-[46%] right-1/2 translate-x-[40%] w-[50rem] max-w-[92vw] aspect-[16/9] rounded-[2.2rem] overflow-hidden border border-white/5"
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,23,42,.6),transparent_30%,rgba(15,23,42,.7))]" />
-        <img
-          src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=1600&auto=format&fit=crop"
-          alt=""
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0" style={{
-          maskImage: 'radial-gradient(90% 70% at 50% 50%, black 60%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(90% 70% at 50% 50%, black 60%, transparent 100%)'
-        }} />
-      </motion.div>
-
-      {/* Scene 3: She receives and smiles */}
-      <motion.div
-        style={{ y: maybe(yFast), opacity: prefersReducedMotion ? 0.12 : s3Opacity }}
-        className="absolute bottom-[-4%] left-1/2 -translate-x-1/2 w-[54rem] max-w-[94vw] aspect-[16/9] rounded-[2.4rem] overflow-hidden border border-white/5"
-      >
-        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(15,23,42,.55),transparent_35%,rgba(15,23,42,.75))]" />
-        <img
-          src="https://images.unsplash.com/photo-1758874089961-e52549c294c3?auto=format&fit=crop&w=1600&q=80"
-          alt=""
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0" style={{
-          maskImage: 'radial-gradient(90% 70% at 50% 50%, black 60%, transparent 100%)',
-          WebkitMaskImage: 'radial-gradient(90% 70% at 50% 50%, black 60%, transparent 100%)'
-        }} />
-      </motion.div>
+      {/* Subtle bottom fade to ensure footer readability */}
+      <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-slate-950 via-slate-950/70 to-transparent" />
     </div>
   )
 }
