@@ -5,6 +5,7 @@ import Gifts from './components/Gifts'
 import HowItWorks from './components/HowItWorks'
 import Testimonials from './components/Testimonials'
 import Cart from './components/Cart'
+import ParallaxBackground from './components/ParallaxBackground'
 
 const API_BASE = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
 
@@ -38,8 +39,8 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 relative">
-      <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_20%_-10%,rgba(236,72,153,.25),transparent_40%),radial-gradient(circle_at_80%_-10%,rgba(124,58,237,.25),transparent_40%)]"/>
+    <div className="min-h-screen relative">
+      <ParallaxBackground />
       <Navbar onCartOpen={() => setCartOpen(true)} />
       <main className="pt-16">
         <Hero />
